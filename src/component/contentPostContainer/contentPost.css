@@ -1,0 +1,11 @@
+.content-post {
+    margin-top: 20px;
+}
+.content-upload-container {
+    width: 94%;
+    height: 25vh;
+    background: white;
+    margin: auto;
+    border-radius: 10px;
+    padding: 10px;
+}

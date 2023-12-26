@@ -1,0 +1,12 @@
+.home {
+    background: rgb(235, 238, 242);
+    /* height: 100vh; */
+    padding-bottom: 20px;
+}
+
+.home-container {
+    width: 95%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}

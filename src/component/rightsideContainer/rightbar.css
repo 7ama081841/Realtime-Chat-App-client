@@ -1,0 +1,22 @@
+.rightbar {
+    flex: 1;
+}
+
+.rightContainer,
+.rightContainer2 {
+    width: 25pc;
+    height: 40vh;
+    background: white;
+    margin-top: 20px;
+    border-radius: 15px;
+    overflow: auto;
+    text-transform: capitalize;
+}
+
+.rightContainer2 {
+    height: 60vh;
+}
+
+.adsimg {
+    width: 130px;
+}

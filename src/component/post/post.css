@@ -1,0 +1,19 @@
+.post-container {
+}
+
+.sub-post-container {
+    /* width: 90%; */
+    width: 94%;
+    height: 25vh;
+    background: white;
+    margin: auto;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.post-container .post-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}

@@ -1,0 +1,19 @@
+.leftbar {
+    flex: 1;
+}
+.leftbar .notificationsContainer {
+    width: 100%;
+    height: 60vh;
+    background-color: white;
+    margin-top: 20px;
+    border-radius: 20px;
+}
+
+.leftbar .explore-img {
+    width: 83px;
+    height: 150px;
+    object-fit: cover;
+    margin-left: 4px;
+    border-radius: 7px;
+    margin-top: 10px;
+}
