@@ -5,7 +5,7 @@ import ContentPost from "../contentPostContainer/ContentPost";
 const MainPost = () => {
     return (
         <div className="main-post-container">
-            <ContentPost />{" "}
+            <ContentPost />
         </div>
     );
 };

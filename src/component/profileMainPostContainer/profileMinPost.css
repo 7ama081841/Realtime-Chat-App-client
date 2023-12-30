@@ -1,0 +1,19 @@
+.profile-Min-Post {
+    flex: 3;
+    margin-top: 20px;
+}
+
+.profile-Min-Post .profile-cover-image {
+    width: 92%;
+    height: 20vh;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.profile-Min-Post h3 {
+    margin-top: -40px;
+    margin-left: 34px;
+    text-align: start;
+    color: white;
+    -webkit-text-stroke: 0.7px black;
+}

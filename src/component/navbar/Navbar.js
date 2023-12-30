@@ -16,6 +16,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import "./navbar.css";
+import { Link } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -99,7 +100,12 @@ export default function Navbar() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+            <Link
+                style={{ color: "black", textDecoration: "none" }}
+                to="/profile/1541618"
+            >
+                <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+            </Link>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
         </Menu>
     );
@@ -179,7 +185,12 @@ export default function Navbar() {
                         component="div"
                         sx={{ display: { xs: "none", sm: "block" } }}
                     >
-                        MUI
+                        <Link
+                            style={{ color: "#fff", textDecoration: "none" }}
+                            to="/"
+                        >
+                            Home
+                        </Link>
                     </Typography>
                     {/* start Search  */}
 

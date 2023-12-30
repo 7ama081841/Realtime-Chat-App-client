@@ -2,9 +2,8 @@
 }
 
 .sub-post-container {
-    /* width: 90%; */
     width: 94%;
-    height: 25vh;
+    min-height: 25vh;
     background: white;
     margin: auto;
     border-radius: 10px;
@@ -16,4 +15,9 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
+}
+
+.post-container .image-post {
+    width: 80%;
+    object-fit: contain;
 }

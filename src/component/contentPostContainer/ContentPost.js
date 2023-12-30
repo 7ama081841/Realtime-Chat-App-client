@@ -4,6 +4,7 @@ import image from "../../images/307466870_467381052078655_3812996932479743001_n.
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import Button from "@mui/material/Button";
 import Post from "../post/Post";
+import { IconButton } from "@mui/material";
 
 const ContentPost = () => {
     const file = useRef();
@@ -53,11 +54,15 @@ const ContentPost = () => {
                             ref={file}
                             type="file"
                         />
-                        <ImageOutlinedIcon
+                        <IconButton
                             onClick={() => file.current.click()}
-                            sx={{ color: "green", cursor: "pointer" }}
-                            fontSize="large"
-                        />
+                            aria-label="menu"
+                        >
+                            <ImageOutlinedIcon
+                                sx={{ color: "green", cursor: "pointer" }}
+                                fontSize="large"
+                            />
+                        </IconButton>
                     </div>
                     <div
                         style={{
