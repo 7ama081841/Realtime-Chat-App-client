@@ -9,14 +9,13 @@ import InputBase from "@mui/material/InputBase";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import "./navbar.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -48,8 +47,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     color: "inherit",
     "& .MuiInputBase-input": {
         padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        // paddingLeft: `calc(1em + ${theme.spacing(4)})`,
         paddingLeft: theme.spacing(4),
         transition: theme.transitions.create("width"),
         width: "100% !important",
@@ -62,6 +59,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function Navbar() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const navigate = useNavigate();
+    const auth = JSON.parse(localStorage.getItem("user"));
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -83,6 +82,11 @@ export default function Navbar() {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem("user");
+        return navigate("/");
+    };
+
     const menuId = "primary-search-account-menu";
     const renderMenu = (
         <Menu
@@ -102,11 +106,16 @@ export default function Navbar() {
         >
             <Link
                 style={{ color: "black", textDecoration: "none" }}
-                to="/profile/1541618"
+                to={`/profile/${auth.data.user._id}`}
             >
-                <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+                <MenuItem onClick={handleMenuClose}>
+                    {auth.data.user.firstName
+                        ? auth.data.user.firstName
+                        : "Profile"}
+                </MenuItem>
             </Link>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
     );
 
@@ -159,9 +168,25 @@ export default function Navbar() {
                     aria-haspopup="true"
                     color="inherit"
                 >
-                    <AccountCircle />
+                    {auth.data.user.avatar ? (
+                        <img
+                            style={{
+                                width: "30px",
+                                height: "30px",
+                                borderRadius: "50%",
+                            }}
+                            src={auth.data.user.avatar}
+                            alt="img"
+                        />
+                    ) : (
+                        <AccountCircle />
+                    )}
                 </IconButton>
-                <p>Profile</p>
+                <p>
+                    {auth.data.user.firstName
+                        ? auth.data.user.firstName
+                        : " Profile"}
+                </p>
             </MenuItem>
         </Menu>
     );
@@ -170,15 +195,6 @@ export default function Navbar() {
         <Box className="navbar" sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="open drawer"
-                        sx={{ mr: 2 }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
                     <Typography
                         variant="h6"
                         noWrap
@@ -187,14 +203,12 @@ export default function Navbar() {
                     >
                         <Link
                             style={{ color: "#fff", textDecoration: "none" }}
-                            to="/"
+                            to="/home"
                         >
                             Home
                         </Link>
                     </Typography>
-                    {/* start Search  */}
 
-                    {/* start Search  */}
                     <Box sx={{ flexGrow: 1 }}>
                         <Search
                             className="search"
@@ -234,7 +248,7 @@ export default function Navbar() {
                             aria-label="show 17 new notifications"
                             color="inherit"
                         >
-                            <Badge badgeContent={1000} color="error">
+                            <Badge badgeContent={17} color="error">
                                 <NotificationsIcon />
                             </Badge>
                         </IconButton>
@@ -247,7 +261,19 @@ export default function Navbar() {
                             onClick={handleProfileMenuOpen}
                             color="inherit"
                         >
-                            <AccountCircle />
+                            {auth.data.user.avatar ? (
+                                <img
+                                    style={{
+                                        width: "30px",
+                                        height: "30px",
+                                        borderRadius: "50%",
+                                    }}
+                                    src={auth.data.user.avatar}
+                                    alt="img"
+                                />
+                            ) : (
+                                <AccountCircle />
+                            )}
                         </IconButton>
                     </Box>
                     <Box sx={{ display: { xs: "flex", md: "none" } }}>

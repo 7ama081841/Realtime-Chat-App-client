@@ -1,17 +1,21 @@
 import React from "react";
 import "./profileLeftbar.css";
-import image from "../../images/307466870_467381052078655_3812996932479743001_n.jpg";
+import image from "../../images/depositphotos_364169666-stock-illustration-default-avatar-profile-icon-vector.jpg";
 import Button from "@mui/material/Button";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 
-const ProfileLeftbar = () => {
+const ProfileLeftbar = ({ profile }) => {
     return (
         <div className="leftbar">
             <div
                 className="notificationsContainer"
                 style={{ overflow: "auto" }}
             >
-                <img src={image} alt="" className="profile-image-cover" />
+                <img
+                    src={profile?.avatar ? profile?.avatar : image}
+                    alt=""
+                    className="profile-image-cover"
+                />
                 <div
                     style={{
                         display: "flex",
@@ -20,8 +24,12 @@ const ProfileLeftbar = () => {
                         marginTop: "-20px",
                     }}
                 >
-                    <img src={image} alt="" className="profile-image" />
-                    <p> mohamed chaabani </p>
+                    <img
+                        src={profile?.avatar ? profile?.avatar : image}
+                        alt=""
+                        className="profile-image"
+                    />
+                    <p>{`${profile?.firstName} ${profile?.lastName}`}</p>
                 </div>
                 <div
                     style={{
@@ -30,8 +38,8 @@ const ProfileLeftbar = () => {
                         padding: "0 20px",
                     }}
                 >
-                    <p style={{ margin: "0" }}> frinds </p>
-                    <p style={{ margin: "0" }}>100</p>
+                    <p style={{ margin: "0" }}> friends </p>
+                    <p style={{ margin: "0" }}> {profile?.frands.length} </p>
                 </div>
                 <div
                     style={{
@@ -41,7 +49,7 @@ const ProfileLeftbar = () => {
                     }}
                 >
                     <p style={{ margin: "0" }}> photos </p>
-                    <p style={{ margin: "0" }}>500</p>
+                    <p style={{ margin: "0" }}> {profile?.photos.length} </p>
                 </div>
 
                 <div style={{ padding: "10px 0" }}>
@@ -61,27 +69,33 @@ const ProfileLeftbar = () => {
                 <div
                     style={{ display: "flex", justifyContent: "space-around" }}
                 >
-                    <p>your frinds</p>
+                    <p>your friends</p>
                     <p className="see-all">see all</p>
                 </div>
 
-                <div className="profile-frinds">
-                    <div>
-                        <img className="explore-img" src={image} alt="" />
-                        <p>mohamed chaabani</p>
-                    </div>
-                    <div>
-                        <img className="explore-img" src={image} alt="" />
-                        <p>mohamed chaabani</p>
-                    </div>
-                    <div>
-                        <img className="explore-img" src={image} alt="" />
-                        <p>mohamed chaabani</p>
-                    </div>
-                    <div>
-                        <img className="explore-img" src={image} alt="" />
-                        <p>mohamed chaabani</p>
-                    </div>
+                <div
+                    style={{
+                        justifyContent: "space-around",
+                    }}
+                    className="profile-frinds"
+                >
+                    {profile?.frands.length > 0 ? (
+                        profile?.frands.map((item) => (
+                            <div>
+                                <img
+                                    className="explore-img"
+                                    src={image}
+                                    alt=""
+                                />
+                                <p>mohamed chaabani</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p style={{ textAlign: "center" }}>
+                            {" "}
+                            you are don't have friends
+                        </p>
+                    )}
                 </div>
             </div>
         </div>
@@ -89,3 +103,17 @@ const ProfileLeftbar = () => {
 };
 
 export default ProfileLeftbar;
+
+//   <div>
+//                         <img className="explore-img" src={image} alt="" />
+//                         <p>mohamed chaabani</p>
+//                     </div>
+//
+//                     <div>
+//                         <img className="explore-img" src={image} alt="" />
+//                         <p>mohamed chaabani</p>
+//                     </div>
+//                     <div>
+//                         <img className="explore-img" src={image} alt="" />
+//                         <p>mohamed chaabani</p>
+//                     </div>

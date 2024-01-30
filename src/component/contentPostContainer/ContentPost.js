@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import "./contentPost.css";
-import image from "../../images/307466870_467381052078655_3812996932479743001_n.jpg";
+import image from "../../images/depositphotos_364169666-stock-illustration-default-avatar-profile-icon-vector.jpg";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import Button from "@mui/material/Button";
 import Post from "../post/Post";
@@ -8,6 +8,7 @@ import { IconButton } from "@mui/material";
 
 const ContentPost = () => {
     const file = useRef();
+    const auth = JSON.parse(localStorage.getItem("user"));
 
     return (
         <div className="content-post">
@@ -33,9 +34,14 @@ const ContentPost = () => {
                             style={{
                                 borderRadius: "50px",
                                 width: "50px",
+                                height: "50px",
                                 margin: "0 15px",
                             }}
-                            src={image}
+                            src={
+                                auth.data.user.avatar
+                                    ? auth.data.user.avatar
+                                    : image
+                            }
                             alt=""
                         />
                         <input
