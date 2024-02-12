@@ -16,6 +16,14 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import "./navbar.css";
 import { Link, useNavigate } from "react-router-dom";
+import Axios from "axios";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Divider from "@mui/material/Divider";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Avatar from "@mui/material/Avatar";
+import image from "../../images/depositphotos_364169666-stock-illustration-default-avatar-profile-icon-vector.jpg";
 
 const Search = styled("div")(({ theme }) => ({
     position: "relative",
@@ -56,17 +64,65 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-export default function Navbar() {
+export default function Navbar({
+    getProfile,
+    setDataUpdated,
+    dataUpdated,
+    profile,
+    socket,
+}) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const [notificationMenuAnchorEl, setNotificationMenuAnchorEl] =
+        React.useState(null);
     const navigate = useNavigate();
     const auth = JSON.parse(localStorage.getItem("user"));
+    const [notification, setNotification] = React.useState([]);
+    const [reRander, setReRander] = React.useState(false);
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    const isnotificationMenuOpen = Boolean(notificationMenuAnchorEl);
+
+    const getNotifications = async () => {
+        try {
+            const res = await Axios.get(
+                `http://localhost:5000/api/notification/${auth.data.user._id}`
+            );
+
+            setNotification(res.data);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
+    React.useEffect(() => {
+        reRander && setReRander(false);
+
+        getNotifications();
+    }, [reRander]);
+
+    const isReaded = notification?.filter((notif) => {
+        return notif.isRead === false;
+    });
+
+    React.useEffect(() => {
+        socket?.on("getNotification", () => {
+            console.log("jawek behi");
+            getNotifications();
+        });
+    }, [socket]);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
+    };
+
+    const handleNotificationMenuOpen = (event) => {
+        setNotificationMenuAnchorEl(event.currentTarget);
+    };
+
+    const handleNotificationMenuClose = () => {
+        setNotificationMenuAnchorEl(null);
     };
 
     const handleMobileMenuClose = () => {
@@ -84,7 +140,45 @@ export default function Navbar() {
 
     const handleLogout = () => {
         localStorage.removeItem("user");
+        socket?.emit("logoutUser", auth.data.user._id);
         return navigate("/");
+    };
+
+    const readNotification = async (notificationId) => {
+        try {
+            const res = await Axios.patch(
+                `http://localhost:5000/api/readNotification`,
+                { notificationId },
+                { headers: auth?.data.token }
+            );
+
+            setReRander(true);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleDate = (date) => {
+        const formatDate = new Date(date);
+        const dateNow = new Date();
+        const diffDate = dateNow - formatDate;
+
+        const days = Math.floor(diffDate / (1000 * 60 * 60 * 24));
+
+        if (days < 1) {
+            const hours = Math.floor(diffDate / (1000 * 60 * 60));
+            if (hours < 1) {
+                const minutes = Math.floor(diffDate / (1000 * 60));
+                return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+            } else {
+                return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+            }
+        } else if (days < 7) {
+            return `${days} day${days > 1 ? "s" : ""} ago`;
+        } else {
+            const weeks = Math.floor(days / 7);
+            return `${weeks} week${weeks > 1 ? "s" : ""} ago`;
+        }
     };
 
     const menuId = "primary-search-account-menu";
@@ -106,16 +200,102 @@ export default function Navbar() {
         >
             <Link
                 style={{ color: "black", textDecoration: "none" }}
-                to={`/profile/${auth.data.user._id}`}
+                to={`/profile/${auth?.data.user._id}`}
             >
                 <MenuItem onClick={handleMenuClose}>
-                    {auth.data.user.firstName
+                    {auth?.data.user.firstName
                         ? auth.data.user.firstName
                         : "Profile"}
                 </MenuItem>
             </Link>
 
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        </Menu>
+    );
+
+    const notificationId = "notificationMenu";
+    const notificationMenu = (
+        <Menu
+            anchorEl={notificationMenuAnchorEl}
+            anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+            }}
+            id={notificationId}
+            keepMounted
+            transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+            }}
+            open={isnotificationMenuOpen}
+            onClose={handleNotificationMenuClose}
+            sx={{ minWidth: "416px", minHeight: "289px " }}
+        >
+            {notification.length > 0 ? (
+                <List
+                    sx={{
+                        width: "100%",
+                        maxWidth: 360,
+                        bgcolor: "background.paper",
+                    }}
+                >
+                    {notification &&
+                        notification.map((items) => (
+                            <React.Fragment key={items._id}>
+                                <ListItem
+                                    alignItems="flex-start"
+                                    sx={{
+                                        background: items.isRead
+                                            ? ""
+                                            : " rgb(212, 223, 255)",
+
+                                        cursor: "pointer",
+                                    }}
+                                    onClick={() => readNotification(items._id)}
+                                >
+                                    <ListItemAvatar>
+                                        <Avatar
+                                            alt="Remy Sharp"
+                                            src={
+                                                items.sender
+                                                    ? items?.sender?.avatar
+                                                    : image
+                                            }
+                                        />
+                                    </ListItemAvatar>
+                                    <ListItemText
+                                        primary={` ${items.sender?.firstName} ${items.sender?.lastName} `}
+                                        secondary={
+                                            <React.Fragment>
+                                                <Typography
+                                                    sx={{ display: "inline" }}
+                                                    component="span"
+                                                    variant="body2"
+                                                    color="text.primary"
+                                                >
+                                                    {items?.notificationMessage}
+                                                    <span
+                                                        style={{
+                                                            margin: "0px",
+                                                            display: "block",
+                                                        }}
+                                                    >
+                                                        {handleDate(
+                                                            items.creaAt
+                                                        )}
+                                                    </span>
+                                                </Typography>
+                                            </React.Fragment>
+                                        }
+                                    />
+                                </ListItem>
+                                <Divider variant="inset" component="li" />
+                            </React.Fragment>
+                        ))}
+                </List>
+            ) : (
+                <p style={{ padding: "10px" }}>you don't have notifications</p>
+            )}
         </Menu>
     );
 
@@ -154,7 +334,7 @@ export default function Navbar() {
                     aria-label="show 17 new notifications"
                     color="inherit"
                 >
-                    <Badge badgeContent={17} color="error">
+                    <Badge badgeContent={isReaded.length} color="error">
                         <NotificationsIcon />
                     </Badge>
                 </IconButton>
@@ -168,14 +348,14 @@ export default function Navbar() {
                     aria-haspopup="true"
                     color="inherit"
                 >
-                    {auth.data.user.avatar ? (
+                    {auth?.data.user.avatar ? (
                         <img
                             style={{
                                 width: "30px",
                                 height: "30px",
                                 borderRadius: "50%",
                             }}
-                            src={auth.data.user.avatar}
+                            src={auth?.data.user.avatar}
                             alt="img"
                         />
                     ) : (
@@ -183,7 +363,7 @@ export default function Navbar() {
                     )}
                 </IconButton>
                 <p>
-                    {auth.data.user.firstName
+                    {auth?.data.user.firstName
                         ? auth.data.user.firstName
                         : " Profile"}
                 </p>
@@ -247,8 +427,9 @@ export default function Navbar() {
                             size="large"
                             aria-label="show 17 new notifications"
                             color="inherit"
+                            onClick={handleNotificationMenuOpen}
                         >
-                            <Badge badgeContent={17} color="error">
+                            <Badge badgeContent={isReaded.length} color="error">
                                 <NotificationsIcon />
                             </Badge>
                         </IconButton>
@@ -261,14 +442,14 @@ export default function Navbar() {
                             onClick={handleProfileMenuOpen}
                             color="inherit"
                         >
-                            {auth.data.user.avatar ? (
+                            {auth?.data.user.avatar ? (
                                 <img
                                     style={{
                                         width: "30px",
                                         height: "30px",
                                         borderRadius: "50%",
                                     }}
-                                    src={auth.data.user.avatar}
+                                    src={auth?.data.user.avatar}
                                     alt="img"
                                 />
                             ) : (
@@ -292,6 +473,7 @@ export default function Navbar() {
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
+            {notificationMenu}
         </Box>
     );
 }

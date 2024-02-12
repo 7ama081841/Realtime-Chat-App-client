@@ -7,15 +7,13 @@ import ProfileRightbar from "../../component/profileRightsideContainer/ProfileRi
 import { useParams } from "react-router-dom";
 import Axios from "axios";
 
-const Profile = () => {
+const Profile = ({ socket, onlineusers, setOnlineusers }) => {
     const auth = JSON.parse(localStorage.getItem("user"));
     const [profile, setProfile] = useState(null);
     const { id } = useParams();
-
     const [dataUpdated, setDataUpdated] = useState(false);
 
     const getProfile = async () => {
-        console.log("getProfile is worked ");
         try {
             const res = await Axios.get(
                 `http://localhost:5000/api/profile/${id}`,
@@ -40,19 +38,33 @@ const Profile = () => {
         if (dataUpdated) {
             getProfile();
             setDataUpdated(false);
-            console.log("useEffect is worked ");
         }
     }, [dataUpdated]);
 
+    useEffect(() => {
+        socket?.emit("connected", auth.data.user._id);
+    }, [socket]);
+
     return (
         <div className="profile-container">
-            <Navbar />
+            <Navbar
+                getProfile={getProfile}
+                dataUpdated={dataUpdated}
+                setDataUpdated={setDataUpdated}
+                profile={profile}
+                socket={socket}
+            />
             <div className="sub-profile-container">
-                <ProfileLeftbar profile={profile} />
+                <ProfileLeftbar
+                    getProfile={getProfile}
+                    socket={socket}
+                    profile={profile}
+                />
                 <ProfileMinPost profile={profile} />
                 <ProfileRightbar
                     getProfile={getProfile}
                     profile={profile}
+                    socket={socket}
                     setDataUpdated={setDataUpdated}
                 />
             </div>

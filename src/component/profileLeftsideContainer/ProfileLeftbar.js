@@ -1,10 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./profileLeftbar.css";
 import image from "../../images/depositphotos_364169666-stock-illustration-default-avatar-profile-icon-vector.jpg";
 import Button from "@mui/material/Button";
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
+import {
+    Avatar,
+    Divider,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Typography,
+} from "@mui/material";
 
-const ProfileLeftbar = ({ profile }) => {
+const ProfileLeftbar = ({ profile, socket, getProfile }) => {
+    const [onlineusers, setOnlineusers] = useState([]);
+
+    useEffect(() => {
+        socket?.on("onlineUsers", (users) => {
+            setOnlineusers(users);
+        });
+
+        socket?.on("getNotification", () => {
+            // getProfile();
+        });
+    }, [socket]);
+
     return (
         <div className="leftbar">
             <div
@@ -69,51 +90,75 @@ const ProfileLeftbar = ({ profile }) => {
                 <div
                     style={{ display: "flex", justifyContent: "space-around" }}
                 >
-                    <p>your friends</p>
+                    <p> your friends</p>
                     <p className="see-all">see all</p>
                 </div>
 
-                <div
-                    style={{
-                        justifyContent: "space-around",
+                <List
+                    sx={{
+                        width: "100%",
+                        maxWidth: 360,
+                        bgcolor: "background.paper",
                     }}
-                    className="profile-frinds"
                 >
                     {profile?.frands.length > 0 ? (
                         profile?.frands.map((item) => (
-                            <div>
-                                <img
-                                    className="explore-img"
-                                    src={image}
-                                    alt=""
-                                />
-                                <p>mohamed chaabani</p>
-                            </div>
+                            <React.Fragment key={item._id}>
+                                <ListItem alignItems="flex-start">
+                                    <ListItemAvatar>
+                                        <Avatar
+                                            alt="Remy Sharp"
+                                            src={
+                                                item?.avatar
+                                                    ? item?.avatar
+                                                    : image
+                                            }
+                                        />
+                                        <span
+                                            style={{
+                                                width: "15px",
+                                                height: "15px",
+                                                borderRadius: "50%",
+                                                background: "green",
+                                                position: "absolute",
+                                                left: "42px",
+                                                bottom: "5px",
+                                                display: onlineusers.some(
+                                                    (online) =>
+                                                        online.userId ===
+                                                        item?._id
+                                                )
+                                                    ? ""
+                                                    : "none",
+                                            }}
+                                        ></span>
+                                    </ListItemAvatar>
+                                    <ListItemText
+                                        primary={`${item?.firstName} ${item?.lastName}`}
+                                        secondary={
+                                            <React.Fragment>
+                                                <Typography
+                                                    sx={{ display: "inline" }}
+                                                    component="span"
+                                                    variant="body2"
+                                                    color="text.primary"
+                                                ></Typography>
+                                            </React.Fragment>
+                                        }
+                                    />
+                                </ListItem>
+                                <Divider variant="inset" component="li" />
+                            </React.Fragment>
                         ))
                     ) : (
                         <p style={{ textAlign: "center" }}>
-                            {" "}
                             you are don't have friends
                         </p>
                     )}
-                </div>
+                </List>
             </div>
         </div>
     );
 };
 
 export default ProfileLeftbar;
-
-//   <div>
-//                         <img className="explore-img" src={image} alt="" />
-//                         <p>mohamed chaabani</p>
-//                     </div>
-//
-//                     <div>
-//                         <img className="explore-img" src={image} alt="" />
-//                         <p>mohamed chaabani</p>
-//                     </div>
-//                     <div>
-//                         <img className="explore-img" src={image} alt="" />
-//                         <p>mohamed chaabani</p>
-//                     </div>

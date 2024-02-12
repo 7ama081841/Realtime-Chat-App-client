@@ -38,7 +38,7 @@ const ContentPost = () => {
                                 margin: "0 15px",
                             }}
                             src={
-                                auth.data.user.avatar
+                                auth?.data.user.avatar
                                     ? auth.data.user.avatar
                                     : image
                             }

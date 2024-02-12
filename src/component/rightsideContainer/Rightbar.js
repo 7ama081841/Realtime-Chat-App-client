@@ -12,7 +12,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import image from "../../images/depositphotos_364169666-stock-illustration-default-avatar-profile-icon-vector.jpg";
 import axios from "axios";
 
-const Rightbar = ({ users, auth }) => {
+const Rightbar = ({ socket, users, auth }) => {
     const [profile, setProfile] = React.useState([]);
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState(null);
@@ -34,7 +34,6 @@ const Rightbar = ({ users, auth }) => {
                 setProfile(res.data.profile);
             }
         } catch (err) {
-            console.log(err);
             setError(err);
         } finally {
             setLoading(false);
@@ -59,11 +58,15 @@ const Rightbar = ({ users, auth }) => {
                 );
 
                 setProfile(res.data);
+
+                socket.emit("sendNotification", {
+                    resiverId: id,
+                });
             } catch (err) {
                 console.log(err);
             }
         },
-        [auth.data.user._id, auth.data.token, getProfile]
+        [auth?.data.user._id, auth?.data.token, getProfile]
     );
 
     const cancelinvItation = React.useCallback(
@@ -80,11 +83,17 @@ const Rightbar = ({ users, auth }) => {
                 );
 
                 setProfile(res.data);
+
+                socket.emit("sendNotification", {
+                    resiverId: id,
+                    senderId: auth.data.user._id,
+                    notificationMessage: "sended invitasion to you",
+                });
             } catch (err) {
                 console.log(err);
             }
         },
-        [auth.data.user._id, auth.data.token, getProfile]
+        [auth?.data.user._id, auth?.data.token, getProfile]
     );
 
     return (
@@ -106,7 +115,8 @@ const Rightbar = ({ users, auth }) => {
                                   <ListItem
                                       sx={{
                                           display:
-                                              item._id === auth.data.user._id ||
+                                              item._id ===
+                                                  auth?.data.user._id ||
                                               profile?.invitasions?.some(
                                                   (user) =>
                                                       user._id === item._id
